@@ -147,8 +147,11 @@ public class TodoListController {
 	@PutMapping("/jackson2/{id}")
 	public ResponseEntity updateListJackson2(@RequestBody String json, @PathVariable int id) {
 		try {
+			TodoListDto dto = repo.get(id);
 			JsonNode node = new ObjectMapper().readTree(json);
-			node.get("color").asText();
+			dto.color = node.get("color").asText();
+			
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
