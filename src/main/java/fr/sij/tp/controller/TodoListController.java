@@ -1,5 +1,6 @@
 package fr.sij.tp.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.sij.tp.model.TaskDto;
 import fr.sij.tp.model.TodoListDto;
@@ -28,6 +35,29 @@ public class TodoListController {
 	@GetMapping
 	public List<TodoListDto> getAll(){
 		return repo.getAll();
+	}
+	
+	@GetMapping("/jackson")
+	public ResponseEntity<String> getObject() {
+		ObjectMapper mapper = new ObjectMapper();
+		
+		String jsonIn ="{ \"age\" : 12, \"nom\" : \"Patrick\"}";
+		try {
+			 // TaskDto dto = mapper.readValue(jsonIn, TaskDto.class); 
+			  JsonNode node = mapper.readTree(jsonIn);
+			  node.isArray();
+			  node.isObject();
+			  int age = node.get("age").asInt();
+			  String nom = node.get("nom").asText();
+			
+			
+				String result = mapper.writeValueAsString(new String("toto"));
+			return new ResponseEntity<String>(result, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().build();
+		}
+		
 	}
 	
 	@GetMapping("/{id}")

@@ -27,6 +27,7 @@ public class MockRepository {
 			TaskDto t = new TaskDto();
 			t.id = 1001;
 			list.tasks.add(t);
+			t.parentList = list;
 			t.content = "My first task in the list";
 		}
 		

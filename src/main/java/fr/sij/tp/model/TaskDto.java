@@ -1,10 +1,13 @@
 package fr.sij.tp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class TaskDto {
 	
 	public int id;
 	public String status;
 	public String content;
+	@JsonIgnore public TodoListDto parentList;
 	
 	@Override
 	public int hashCode() {
