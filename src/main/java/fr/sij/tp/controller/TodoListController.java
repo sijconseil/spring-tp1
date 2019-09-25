@@ -41,26 +41,29 @@ public class TodoListController {
 	}
 
 	@PostMapping
-	public void addList(@RequestBody TodoListDto list)  {
-		if(repo.get(list.id)!=null) throw new Exception("List already created");
+	public ResponseEntity<Integer> addList(@RequestBody TodoListDto list)  {
+		if(repo.get(list.id)!=null) return ResponseEntity.badRequest().build();
 		repo.add(list);
+		return new ResponseEntity<>(list.id, HttpStatus.CREATED);
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@PutMapping("/{id}")
-	public void updateList(@RequestBody TodoListDto list, @PathVariable int id) throws Exception {
+	public ResponseEntity updateList(@RequestBody TodoListDto list, @PathVariable int id)  {
 		// on verifie la coherence de l'id dans le body et dans le paramètre
-		if(id!=list.id) throw new Exception("Non consistent id ");
+		if(id!=list.id) return ResponseEntity.badRequest().build();
 		
 		// on recupère la liste et si elle est nulle elle n'est pas présente
 		// donc on leve une erreur car cela correspond à un post / create. 
 		TodoListDto current = repo.get(id);
-		if(current==null) throw new Exception("List not existing");
+		if(current==null) return ResponseEntity.notFound().build();
 		
 		// on met à jour les champs de la liste plutot qu'écraser l'objet pour éviter de modifier les taches
 		current.color = list.color;
 		current.dueDate = list.dueDate;
 		current.owner = list.owner;
 		current.title = list.title;
+		return ResponseEntity.ok().build();
 		
 	}
 	
@@ -72,10 +75,10 @@ public class TodoListController {
 	}
 	
 	@GetMapping("/{idList}/tasks")
-	public List<TaskDto> getTasks(@PathVariable int idList) throws Exception {
+	public ResponseEntity<List<TaskDto>> getTasks(@PathVariable int idList)  {
 		TodoListDto list = repo.get(idList);
-		if(list==null) throw new Exception("List not existing");
-		return list.tasks;
+		if(list==null) return ResponseEntity.notFound().build();
+		return ResponseEntity.ok().body(list.tasks);
 	}
 	
 	@GetMapping("/{idList}/tasks/{idTask}")
