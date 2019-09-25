@@ -1,6 +1,7 @@
 package fr.sij.tp.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import fr.sij.tp.model.TaskDto;
 import fr.sij.tp.model.TodoListDto;
@@ -32,33 +34,71 @@ public class TodoListController {
 	@Autowired MockRepository repo;
 	
 	// localhost:8080/todolists
-	@GetMapping
-	public List<TodoListDto> getAll(){
+	@GetMapping("")
+	public List<TodoListDto> getAllFull(){
 		return repo.getAll();
 	}
-	
-	@GetMapping("/jackson")
-	public ResponseEntity<String> getObject() {
+
+	@GetMapping("/short1")
+	public String getAllShort1(){
 		ObjectMapper mapper = new ObjectMapper();
-		
-		String jsonIn ="{ \"age\" : 12, \"nom\" : \"Patrick\"}";
-		try {
-			 // TaskDto dto = mapper.readValue(jsonIn, TaskDto.class); 
-			  JsonNode node = mapper.readTree(jsonIn);
-			  node.isArray();
-			  node.isObject();
-			  int age = node.get("age").asInt();
-			  String nom = node.get("nom").asText();
-			
-			
-				String result = mapper.writeValueAsString(new String("toto"));
-			return new ResponseEntity<String>(result, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().build();
+		ArrayNode array = mapper.createArrayNode();
+		for(TodoListDto dto: repo.getAll()) {
+			array.add(dto.toShortJsonNode());
 		}
 		
+		try {
+			return mapper.writeValueAsString(array);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return null;
+		}
+	
 	}
+	
+	@GetMapping("/short2")
+	public JsonNode getAllShort2(){
+		ObjectMapper mapper = new ObjectMapper();
+		ArrayNode array = mapper.createArrayNode();
+		for(TodoListDto dto: repo.getAll()) {
+			array.add(dto.toShortJsonNode());
+		}
+		return array;
+	}
+	
+	
+	@GetMapping("/short3")
+	public List<JsonNode> getAllShort3(){
+		ArrayList<JsonNode> al = new ArrayList<>();
+		for(TodoListDto dto: repo.getAll()) {
+			al.add(dto.toShortJsonNode());
+		}
+		return al;
+	}
+	
+	
+//	@GetMapping("/jackson")
+//	public ResponseEntity<String> getObject() {
+//		ObjectMapper mapper = new ObjectMapper();
+//		
+//		String jsonIn ="{ \"age\" : 12, \"nom\" : \"Patrick\"}";
+//		try {
+//			 // TaskDto dto = mapper.readValue(jsonIn, TaskDto.class); 
+//			  JsonNode node = mapper.readTree(jsonIn);
+//			  node.isArray();
+//			  node.isObject();
+//			  int age = node.get("age").asInt();
+//			  String nom = node.get("nom").asText();
+//			
+//			
+//				String result = mapper.writeValueAsString(new String("toto"));
+//			return new ResponseEntity<String>(result, HttpStatus.OK);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return ResponseEntity.badRequest().build();
+//		}
+//		
+//	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<TodoListDto> get(@PathVariable int id) {
@@ -96,6 +136,27 @@ public class TodoListController {
 		return ResponseEntity.ok().build();
 		
 	}
+	
+	@PutMapping("/jackson/{id}")
+	public ResponseEntity updateListJackson1(@RequestBody JsonNode node, @PathVariable int id) {
+		
+		node.get("color").asText();
+		return null;
+	}
+
+	@PutMapping("/jackson2/{id}")
+	public ResponseEntity updateListJackson2(@RequestBody String json, @PathVariable int id) {
+		try {
+			JsonNode node = new ObjectMapper().readTree(json);
+			node.get("color").asText();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
 	
 	@DeleteMapping("/{id}")
 	public void deleteList(@PathVariable int id) throws Exception {

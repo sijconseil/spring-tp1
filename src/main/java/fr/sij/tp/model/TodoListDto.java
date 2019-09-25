@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class TodoListDto {
 
 	public int id;
@@ -41,6 +45,16 @@ public class TodoListDto {
 		if (id != other.id)
 			return false;
 		return true;
+	}
+	
+	public JsonNode toShortJsonNode() {
+		ObjectNode result = JsonNodeFactory.instance.objectNode();
+		result.put("id",id);
+		result.put("color", color);
+		result.put("owner", owner);
+		result.put("title", title);
+		result.put("dueDate", dueDate.getTime());
+		return result;
 	}
 	
 }
