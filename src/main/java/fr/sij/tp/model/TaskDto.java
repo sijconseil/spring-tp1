@@ -1,33 +1,23 @@
 package fr.sij.tp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class TaskDto {
+public class TaskDto extends GenericDto {
 	
-	public int id;
 	public String status;
 	public String content;
 	@JsonIgnore public TodoListDto parentList;
 	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
+
+	public JsonNode toJson() {
+		ObjectNode result = JsonNodeFactory.instance.objectNode();
+		result.put("id",id);
+		result.put("status", status);
+		result.put("content", content);
 		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TaskDto other = (TaskDto) obj;
-		if (id != other.id)
-			return false;
-		return true;
 	}
 	
 }

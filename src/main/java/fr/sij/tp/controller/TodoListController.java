@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -38,7 +36,14 @@ public class TodoListController {
 	public List<TodoListDto> getAllFull(){
 		return repo.getAll();
 	}
-
+	@GetMapping("full2")
+	public List<JsonNode> getAllFull2(){
+		ArrayList<JsonNode> result = new ArrayList<>();
+		for(TodoListDto todolist: repo.getAll()) {
+			result.add(todolist.toJson());
+		}
+		return result;
+	}
 	@GetMapping("/short1")
 	public String getAllShort1(){
 		ObjectMapper mapper = new ObjectMapper();
@@ -101,11 +106,11 @@ public class TodoListController {
 //	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<TodoListDto> get(@PathVariable int id) {
+	public ResponseEntity<JsonNode> get(@PathVariable int id) {
 		TodoListDto list = repo.get(id);
 		if(list==null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		
-		return new ResponseEntity<TodoListDto>(list, HttpStatus.OK);
+		return new ResponseEntity<JsonNode>(list.toJson(), HttpStatus.OK);
 		
 		
 	}
