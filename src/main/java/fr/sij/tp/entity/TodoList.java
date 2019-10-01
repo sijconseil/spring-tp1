@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="todolist")
 public class TodoList extends GenericEntity{
@@ -19,6 +21,7 @@ public class TodoList extends GenericEntity{
 	public String color;
 	@Column(name="due_date")  public Date dueDate;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="id_owner")
 	public Usr owner;

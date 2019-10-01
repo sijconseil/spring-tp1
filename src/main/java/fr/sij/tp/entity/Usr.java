@@ -14,6 +14,7 @@ public class Usr extends GenericEntity {
 	public String firstname;
 	public String lastname;
 	
+	
 	@OneToMany(mappedBy="owner")
 	public List<TodoList> todolists = new ArrayList<>();
 	

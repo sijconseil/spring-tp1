@@ -12,7 +12,7 @@ public class UsrService {
 	@Autowired UsrRepository repo;
 	
 	public Usr getById(int id) {
-		return repo.getById(id);
+		return repo.getOne(id);
 	}
 
 }
