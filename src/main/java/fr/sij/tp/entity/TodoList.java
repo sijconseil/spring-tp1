@@ -22,8 +22,9 @@ public class TodoList extends GenericEntity{
 	@ManyToOne
 	@JoinColumn(name="id_owner")
 	public Usr owner;
+//	@Column(name="id_owner")public int idOwner; // on utilise cet attribut pour éviter les problèmes de mapping
 	
 	@OneToMany(mappedBy="list")
-	public List<Task> tasks = new ArrayList<>();
+	public List<Task> tasks = new ArrayList<>(); // ce mapping est facultatif voir génant (bidirectionnel)
 
 }
